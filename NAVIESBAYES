@@ -1,0 +1,43 @@
+import pandas as pd
+
+data = {
+    "Age": ["Youth", "Youth", "Middle-ag", "Senior", "Senior", "Senior", "Middle-ag", "Youth", "Youth", "Senior", "Youth", "Middle-ag", "Middle-ag", "Senior"],
+    "Income": ["High", "High", "High", "Medium", "Low", "Low", "Low", "Medium", "Low", "Medium", "Medium", "Medium", "High", "Medium"],
+    "Student": ["No", "No", "No", "No", "Yes", "Yes", "Yes", "No", "Yes", "Yes", "Yes", "No", "Yes", "No"],
+    "Credit_Rat": ["Fair", "Excellent", "Fair", "Fair", "Fair", "Excellent", "Excellent", "Fair", "Fair", "Fair", "Excellent", "Excellent", "Fair", "Excellent"],
+    "Buys_Computer": ["No", "No", "Yes", "Yes", "Yes", "No", "Yes", "No", "Yes", "Yes", "Yes", "Yes", "Yes", "No"]
+}
+
+df = pd.DataFrame(data)
+
+test_person = {
+    "Age": "Youth",
+    "Income": "Medium",
+    "Student": "Yes",
+    "Credit_Rat": "Fair"
+}
+
+classes = ["Yes", "No"]
+final_scores = {}
+
+for c in classes:
+    class_rows = df[df["Buys_Computer"] == c]
+    prob = len(class_rows) / len(df)
+    
+    for column in test_person:
+        feature_value = test_person[column]
+        matches = len(class_rows[class_rows[column] == feature_value])
+        unique_options = df[column].nunique()
+        prob *= (matches + 1) / (len(class_rows) + unique_options)
+        
+    final_scores[c] = prob
+
+print("--- Calculated Scores ---")
+print("Probability for 'Yes':", round(final_scores["Yes"], 6))
+print("Probability for 'No' :", round(final_scores["No"], 6))
+
+print("\n--- Final Prediction ---")
+if final_scores["Yes"] > final_scores["No"]:
+    print("Prediction: This person WILL buy a computer (Yes)")
+else:
+    print("Prediction: This person WILL NOT buy a computer (No)")
