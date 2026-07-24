@@ -1,0 +1,41 @@
+start_rainy = 0.6
+start_sunny = 0.4
+
+rain_to_rain = 0.7
+rain_to_sun = 0.3
+sun_to_rain = 0.4
+sun_to_sun = 0.6
+
+rain_emits_3 = 0.1
+sun_emits_3 = 0.6
+
+rain_emits_1 = 0.5
+sun_emits_1 = 0.1
+
+print("=== DAY 1 ===")
+day1_rain_score = start_rainy * rain_emits_3
+day1_sun_score = start_sunny * sun_emits_3
+
+print(f"Day 1 Rainy Score: {day1_rain_score:.4f}")
+print(f"Day 1 Sunny Score: {day1_sun_score:.4f}")
+print("-" * 40)
+
+print("=== DAY 2 ===")
+from_rain_to_rain = day1_rain_score * rain_to_rain * rain_emits_1
+from_rain_to_sun  = day1_rain_score * rain_to_sun  * sun_emits_1
+
+from_sun_to_rain  = day1_sun_score * sun_to_rain  * rain_emits_1
+from_sun_to_sun   = day1_sun_score * sun_to_sun   * sun_emits_1
+
+day2_rain_score = max(from_rain_to_rain, from_sun_to_rain)
+day2_sun_score  = max(from_rain_to_sun, from_sun_to_sun)
+
+print(f"Day 2 Best Rainy Score: {day2_rain_score:.4f}")
+print(f"Day 2 Best Sunny Score: {day2_sun_score:.4f}")
+print("-" * 40)
+
+print("=== FINAL DECISION ===")
+if day2_sun_score > day2_rain_score:
+    print(f"Conclusion: SUNNY on Day 2! Score: {day2_sun_score:.4f}")
+else:
+    print(f"Conclusion: RAINY on Day 2! Score: {day2_rain_score:.4f}")
