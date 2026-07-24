@@ -43,3 +43,571 @@ print(A / B)
 
 print("\nSum of all elements in A:")
 print(A.sum())
+
+import pandas as pd
+data = {
+ "Roll No": [101, 102, 103, 104, 105],
+ "Name": ["Ravi", "Priya", "Kiran", "Anu", "Sita"],
+ "Marks": [85, 92, 78, 88, 95]
+}
+df = pd.DataFrame(data)
+print("DataFrame:")
+print(df)
+print("\nFirst Three Records:")
+print(df.head(3))
+print("\nAverage Marks:", df["Marks"].mean())
+print("\nStudent with Highest Marks:")
+print(df.loc[df["Marks"].idxmax()])
+print("\nStudent with Lowest Marks:")
+print(df.loc[df["Marks"].idxmin()])
+def grade(mark):
+ if mark >= 90:
+ return "A"
+ elif mark >= 80:
+ return "B"
+ else:
+ return "C"
+df["Grade"] = df["Marks"].apply(grade)
+print("\nDataFrame with Grade:")
+print(df)
+
+import pandas as pd
+data = {
+ "Product": ["Laptop", "Mouse", "Keyboard", "Monitor"],
+ "Price": [50000, 500, 1200, 10000],
+ "Quantity": [10, 50, 30, 15]
+}
+df = pd.DataFrame(data)
+df["Total Value"] = df["Price"] * df["Quantity"]
+print("DataFrame:")
+print(df)
+print("\nProduct with Highest Total Value:")
+print(df.loc[df["Total Value"].idxmax()])
+overall_value = df["Total Value"].sum()
+print("\nOverall Inventory Value:", overall_value)
+
+import pandas as pd
+from sklearn.datasets import load_iris
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df["Species"] = iris.target
+df["Species"] = df["Species"].map({
+ 0: "setosa",
+ 1: "versicolor",
+ 2: "virginica"
+})
+print("Iris DataFrame:")
+print(df)
+print("\nFirst Five Records:")
+print(df.head())
+print("\nNumber of Rows and Columns:")
+print(df.shape)
+print("\nColumn Names:")
+print(df.columns)
+print("\nMissing Values:")
+print(df.isnull().sum())
+print("\nSummary Statistics:")
+print(df.describe())
+print("\nNumber of Samples in Each Class:")
+print(df["Species"].value_counts())
+
+LAB 1
+
+# LAB 2 MACHINE LEARNING
+import pandas as pd
+from google.colab import files
+import matplotlib.pyplot as plt
+uploaded = files.upload()
+df = pd.read_csv("lab2data.csv")
+# PART A
+firstfive = df.head(5)
+lastfive = df.tail(5)
+print("First five records: ",firstfive)
+print("Last five records: ",lastfive)
+rows,cols = df.shape
+print("rows: ", rows)
+print("Columns: ",cols)
+print("Names of all the columns: ",df.columns)
+print("Data type of the columns: ", df.dtypes)
+print("Information of the dataset: ", df.info())
+
+# PART B
+print("Mean Attendance: ",df['Attendance'].mean())
+print("Mean Internal Marks: ",df['Internal Marks'].mean())
+print("Mean External Marks: ",df['External Marks'].mean())
+print("Min of Int Marks: ",df['Internal Marks'].min())
+print("Max of Int Marks: ",df['Internal Marks'].max())
+print("Min of Ext Marks: ",df['External Marks'].min())
+print("Max of Ext Marks: ",df['External Marks'].max())
+print("Standard Deviation of Int Marks: ",df['Internal Marks'].std())
+print("Summary: ",df.describe)
+
+# PART C
+df['Total Marks'] = df['Internal Marks'] + df['External Marks']
+df['Percentage'] = (df['Total Marks']/ 100) * 100
+df
+
+# PART D
+print("Percentage greater than 90: ", df[df['Percentage']>90])
+print("Total Marks Exceeded 90: ",df[df['Total Marks']>90])
+print("Female Students: ",df[df['Gender'] == 'F'])
+print("Male Students: ",df[df['Gender'] == 'M'])
+print("External Marks less than 50: ", df[df['External Marks']< 50])
+
+# PART E
+print("Student with highest Total Marks: ",df.loc[df['Total Marks'].idxmax()])
+print("Student with lowest Total Marks: ",df.loc[df['Total Marks'].idxmin()])
+print("top three performers: ", df.nlargest(3,'Total Marks'))
+print("bottom three performers: ",df.nsmallest(3,'Total Marks'))
+avg = df['Total Marks'].mean()
+print("No.of students above class average: ", (df['Total Marks']> avg).sum())
+
+# PART F
+print("avg Total marks of male students: ", df[df['Gender'] == 'M']['Total Marks'].mean())
+print("avg Total marks of female students: ", df[df['Gender'] == 'F']['Total Marks'].mean())
+avgatt = df[df['Gender'] == 'M']['Total Marks'].mean()
+girlatt = df[df['Gender'] == 'F']['Total Marks'].mean()
+print(avgatt,girlatt)
+
+
+# PART G
+plt.bar(df['Name'],df['Total Marks'])
+plt.title("Total Marks of all students")
+plt.xlabel("Name")
+plt.ylabel("Total Marks")
+plt.show()
+
+plt.hist(df['Attendance'])
+plt.title("Attendance of all students")
+plt.xlabel("Name")
+plt.ylabel("Attendance")
+plt.show()
+
+
+counts = df["Gender"].value_counts()
+plt.pie(counts, labels=counts.index)
+plt.axis('equal')
+plt.show()
+
+
+plt.scatter(df["Attendance"], df["Total Marks"])
+plt.xlabel("Attendance")
+plt.ylabel("Total Marks")
+plt.show()
+
+View Mokshitha’s profileMokshitha Monala
+Mokshitha Monala  (She/Her)  6:25 AM
+import pandas as pd
+import numpy as np
+import math
+import random
+import matplotlib.pyplot as plt
+from google.colab import drive
+drive.mount('/content/drive')
+data = pd.read_csv('/content/drive/MyDrive/data.csv')
+print(data)
+data = data.drop(columns = ["RollNo"])
+data = data.sample(frac=1).reset_index(drop=True)
+split = int(0.8 * len(data))
+train_data = data[:split]
+test_data = data[split:]
+print("Training Data: ",len(train_data))
+print("Test Data:", len(test_data))
+
+def class_counts(data, target):
+ counts = {}
+ for index, row in data.iterrows():
+ label = row[target]
+ if label not in counts:
+ counts[label] = 1
+ else:
+ counts[label] += 1
+ return counts
+
+def entropy(data, target):
+ counts = class_counts(data, target)
+ total = len(data)
+ result = 0
+ for count in counts.values():
+ probability = count / total
+ if probability != 0:
+ result += -probability * math.log2(probability)
+ return result
+
+def split_dataset(data, feature):
+ split = {}
+ for value in data[feature].unique():
+ split[value] = data[data[feature] == value]
+ return split
+
+def information_gain(data, feature, target):
+ parent_entropy = entropy(data, target)
+ total = len(data)
+ values = data[feature].unique()
+ weighted_entropy = 0
+ for value in values:
+ subset = data[data[feature] == value]
+ weight = len(subset) / total
+ subset_entropy = entropy(subset, target)
+ weighted_entropy += weight * subset_entropy
+ gain = parent_entropy - weighted_entropy
+ return gain
+
+def id3(data, features, target):
+ best_gain = -1
+ best_feature = None
+ for feature in features:
+ gain = information_gain(data, feature, target)
+ if gain > best_gain:
+ best_gain = gain
+ best_feature = feature
+ return best_feature
+
+class Node:
+ def __init__(self, feature=None, value = None, label=None):
+ self.feature = feature
+ self.value = value
+ self.label = label
+ self.left = None
+ self.right = None
+ self.children = {}
+
+def build_tree(data, features, target, selector):
+ if len(data) == 0:
+ return None
+ counts = class_counts(data, target)
+ if len(counts) == 1:
+ label = list(counts.keys())[0]
+ return Node(label=label)
+ if len(features) == 0:
+ majority = max(counts, key=counts.get)
+ return Node(label=majority)
+ best_feature = selector(data, features, target)
+ if best_feature is None:
+ majority = max(counts, key=counts.get)
+ return Node(label=majority)
+ root = Node(feature=best_feature)
+ values = data[best_feature].unique()
+ remaining_features = features.copy()
+ remaining_features.remove(best_feature)
+ for value in values:
+ subset = data[data[best_feature] == value]
+ if len(subset) == 0:
+ continue
+ if len(subset) == len(data):
+ majority = max(counts, key=counts.get)
+ root.children[value] = Node(label=majority)
+ continue
+ child = build_tree(subset, remaining_features, target, selector)
+ root.children[value] = child
+ return root
+
+def build_cart_tree(data, features, target):
+ counts = class_counts(data, target)
+
+ if len(counts) == 1:
+ label = list(counts.keys())[0]
+ return Node(label=label)
+
+ if len(features) == 0:
+ majority = max(counts, key=counts.get)
+ return Node(label=majority)
+
+ feature, value = cart(data, features, target)
+
+ if feature is None:
+ majority = max(counts, key=counts.get)
+ return Node(label=majority)
+
+ root = Node(feature=feature, value=value)
+
+ left = data[data[feature] == value]
+ right = data[data[feature] != value]
+
+ remaining_features = features.copy()
+ remaining_features.remove(feature)
+
+ if len(left) == 0:
+ majority = max(counts, key=counts.get)
+ root.left = Node(label=majority)
+ else:
+ root.left = build_cart_tree(left, remaining_features, target)
+
+ if len(right) == 0:
+ majority = max(counts, key=counts.get)
+ root.right = Node(label=majority)
+ else:
+ root.right = build_cart_tree(right, remaining_features, target)
+
+ return root
+
+def split_information(data, feature):
+ values = data[feature].unique()
+ total = len(data)
+ result = 0
+ for value in values:
+ subset = data[data[feature] == value]
+ weight = len(subset) / total
+ if weight != 0:
+ result += -weight * math.log2(weight)
+ return result
+
+
+def gain_ratio(data, feature, target):
+ gain = information_gain(data, feature, target)
+ split_info = split_information(data, feature)
+ if split_info == 0:
+ return 0
+ return gain / split_info
+
+
+def c45(data, features, target):
+ best_ratio = -1
+ best_feature = None
+ for feature in features:
+ ratio = gain_ratio(data, feature, target)
+ if ratio > best_ratio:
+ best_ratio = ratio
+ best_feature = feature
+ return best_feature
+
+def gini(data, target):
+ counts = class_counts(data, target)
+ total = len(data)
+ result = 1
+ for count in counts.values():
+ probability = count / total
+ result -= probability ** 2
+ return result
+
+def gini_index(data, feature, target):
+ values = data[feature].unique()
+ total = len(data)
+ result = 0
+ for value in values:
+ subset = data[data[feature] == value]
+ weight = len(subset) / total
+ result += weight * gini(subset, target)
+ return result
+
+
+def cart(data, features, target):
+ best_feature = None
+ best_value = None
+ best_gini = float("inf")
+ for feature in features:
+ values = data[feature].unique()
+ for value in values:
+ left = data[data[feature] == value]
+ right = data[data[feature] != value]
+
+ weight_left = len(left) / len(data)
+ weight_right = len(right) / len(data)
+
+ gini_value = weight_left * gini(left, target) + weight_right * gini(right, target)
+
+ if gini_value < best_gini:
+ best_gini = gini_value
+ best_feature = feature
+ best_value = value
+ return best_feature, best_value
+
+def print_tree(node, depth=0):
+ if node.label is not None:
+ print(" " * depth + str(node.label))
+ return
+ print(" " * depth + str(node.feature))
+ for value, child in node.children.items():
+ print(" " * depth + "|--", value)
+ print_tree(child, depth + 1)
+
+target = data.columns[-1]
+features = list(data.columns)
+features.remove(target)
+
+id3_tree = build_tree(train_data, features, target, id3)
+c45_tree = build_tree(train_data, features, target, c45)
+cart_tree = build_cart_tree(train_data, features, target)
+print("ID3 Tree:")
+print_tree(id3_tree)
+print("C4.5 Tree:")
+print_tree(c45_tree)
+print("CART Tree:")
+print_tree(cart_tree)
+
+def predict(node, sample):
+ if node.label is not None:
+ return node.label
+ feature = node.feature
+ value = sample[feature]
+ if value not in node.children:
+ return node.label
+ return predict(node.children[value], sample)
+
+def predict_cart(node, sample):
+ if node.label is not None:
+ return node.label
+ if sample[node.feature] == node.value:
+ return predict_cart(node.left, sample)
+ else:
+ return predict_cart(node.right, sample)
+
+id3_predictions = []
+for index, row in test_data.iterrows():
+ prediction = predict(id3_tree, row)
+ id3_predictions.append(prediction)
+
+c45_predictions = []
+for index, row in test_data.iterrows():
+ prediction = predict(c45_tree, row)
+ c45_predictions.append(prediction)
+
+cart_predictions = []
+for index, row in test_data.iterrows():
+ prediction = predict_cart(cart_tree, row)
+ cart_predictions.append(prediction)
+
+actual = test_data[target].tolist()
+def accuracy(actual, predicted):
+ correct = 0
+ for i in range(len(actual)):
+ if actual[i] == predicted[i]:
+ correct += 1
+ return correct / len(actual)
+
+def confusion_matrix(actual, predicted):
+ tp = 0
+ tn = 0
+ fp = 0
+ fn = 0
+ for i in range(len(actual)):
+ if actual[i] == "yes" and predicted[i] == "yes":
+ tp += 1
+ elif actual[i] == "no" and predicted[i] == "no":
+ tn += 1
+ elif actual[i] == "no" and predicted[i] == "yes":
+ fp += 1
+ elif actual[i] == "yes" and predicted[i] == "no":
+ fn += 1
+ return tp, tn, fp, fn
+
+def precision(tp, fp):
+ if tp + fp == 0:
+ return 0
+ return tp / (tp + fp)
+
+
+def recall(tp, fn):
+ if tp + fn == 0:
+ return 0
+ return tp / (tp + fn)
+
+def f1_score(precision, recall):
+ if precision + recall == 0:
+ return 0
+ return (2 * precision * recall) / (precision + recall)
+
+id3_accuracy = accuracy(actual, id3_predictions)
+tp, tn, fp, fn = confusion_matrix(actual, id3_predictions)
+id3_precision = precision(tp, fp)
+id3_recall = recall(tp, fn)
+id3_f1 = f1_score(id3_precision, id3_recall)
+
+c45_accuracy = accuracy(actual, c45_predictions)
+tp, tn, fp, fn = confusion_matrix(actual, c45_predictions)
+c45_precision = precision(tp, fp)
+c45_recall = recall(tp, fn)
+c45_f1 = f1_score(c45_precision, c45_recall)
+
+cart_accuracy = accuracy(actual, cart_predictions)
+tp, tn, fp, fn = confusion_matrix(actual, cart_predictions)
+cart_precision = precision(tp, fp)
+cart_recall = recall(tp, fn)
+cart_f1 = f1_score(cart_precision, cart_recall)
+
+results = pd.DataFrame({
+ "Algorithm": ["ID3", "C4.5", "CART"],
+ "Accuracy": [id3_accuracy,c45_accuracy,cart_accuracy],
+ "Precision": [id3_precision,c45_precision,cart_precision],
+ "Recall": [id3_recall,c45_recall,cart_recall],
+ "F1 Score": [id3_f1,c45_f1,cart_f1]})
+print(results)
+
+best = results.loc[results["Accuracy"].idxmax()]
+print("\nBest Model")
+print(best)
+
+
+LAB 3
+
+import pandas as pd
+import numpy as np
+import math
+import random
+
+from google.colab import drive
+drive.mount('/content/drive')
+data = pd.read_csv('/content/drive/MyDrive/data.csv')
+data = data.drop(columns=["RollNo"])
+data = data.sample(frac=1).reset_index(drop=True)
+
+split = int(0.8 * len(data))
+traindata = data[:split]
+testdata = data[split:]
+target = data.columns[-1]
+
+features = list(data.columns)
+features.remove(target)
+
+def classcounts(data, target):
+ counts = {}
+ for index, row in data.iterrows():
+ label = row[target]
+ if label not in counts:
+ counts[label] = 1
+ else:
+ counts[label] += 1
+ return counts
+
+def priorprobability(data, target):
+ counts = classcounts(data, target)
+ total = len(data)
+ prior = {}
+ for label in counts:
+ prior[label] = counts[label] / total
+ return prior
+
+def likelihood(data, feature, value, label, target):
+ classdata = data[data[target] == label]
+ numerator = len(classdata[classdata[feature] == value])
+ denominator = len(classdata)
+ return (numerator + 1) / (denominator + data[feature].nunique())
+
+def predict(traindata, sample, target):
+ prior = priorprobability(traindata, target)
+ probability = {}
+ for label in prior:
+ result = prior[label]
+ for feature in features:
+ value = sample[feature]
+ result *= likelihood(traindata,feature,value,label,target)
+ probability[label] = result
+ prediction = max(probability, key=probability.get)
+ return prediction
+predictions = []
+
+for index, row in testdata.iterrows():
+ prediction = predict(traindata, row, target)
+ predictions.append(prediction)
+testdata["Predicted"] = predictions
+print(testdata)
+
+LAB4
+
+
+
+Maximize compose field
+Attach an image to your conversation with Ganteda Himaja
+Attach a file to your conversation with Ganteda Himaja
+Open GIF Keyboard
+Open Emoji Keyboard
