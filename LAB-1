@@ -1,0 +1,45 @@
+import numpy as np
+
+arr = np.arange(1, 21)
+
+print("Array:")
+print(arr)
+
+print("\nShape of the array:")
+print(arr.shape)
+
+print("\nMaximum value:", arr.max())
+print("Minimum value:", arr.min())
+
+print("\nMean:", arr.mean())
+print("Standard Deviation:", arr.std())
+
+matrix = arr.reshape(4, 5)
+print("\n4 × 5 Matrix:")
+print(matrix)
+
+print("\nSecond row:")
+print(matrix[1])
+
+print("\nThird column:")
+print(matrix[:, 2])
+
+import numpy as np
+
+A = np.array([10, 20, 30, 40, 50])
+B = np.array([5, 10, 15, 20, 25])
+
+print("Addition (A + B):")
+print(A + B)
+
+print("\nSubtraction (A - B):")
+print(A - B)
+
+print("\nElement-wise Multiplication (A * B):")
+print(A * B)
+
+print("\nElement-wise Division (A / B):")
+print(A / B)
+
+print("\nSum of all elements in A:")
+print(A.sum())
